@@ -64,6 +64,8 @@ class GLEnv {
             gl.getExtension( "EXT_texture_filter_anisotropic" ) ||
             gl.getExtension( "WEBKIT_EXT_texture_filter_anisotropic" ) ||
             gl.getExtension( "MOZ_EXT_texture_filter_anisotropic" );
+
+        this.WEBGL_depth_texture = gl.getExtension( "WEBGL_depth_texture" );
     }
 
 
