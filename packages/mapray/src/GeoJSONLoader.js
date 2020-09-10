@@ -23,6 +23,7 @@ class GeoJSONLoader extends Loader {
      * @param {object}       [options]  オプション集合
      * @param {mapray.GeoJSONLoader.TransformCallback} [options.transform]  リソース要求変換関数
      * @param {mapray.GeoJSONLoader.FinishCallback}    [options.callback]   終了コールバック関数
+     * @param {mapray.Loader.EntityCallback}           [options.onEntity]   エンティティコールバック関数
      */
     constructor( scene, resource, options={} )
     {
@@ -40,6 +41,7 @@ class GeoJSONLoader extends Loader {
         }
 
         super( scene, resource, {
+                onEntity: options.onEntity,
                 onLoad: options.onLoad
         } );
 
@@ -69,6 +71,10 @@ class GeoJSONLoader extends Loader {
     }
 
 
+    /**
+     * @summary 読み込み処理の実態。継承クラスによって実装される。
+     * @private
+     */
     _load()
     {
         return (
@@ -168,6 +174,9 @@ class GeoJSONLoader extends Loader {
     }
 
 
+    /**
+     * @private
+     */
     _loadLines( geometry, geojson ) 
     {
         const color4 = this._getLineColor( geojson );
@@ -198,6 +207,9 @@ class GeoJSONLoader extends Loader {
     }
 
 
+    /**
+     * @private
+     */
     _generateLine( points, width, color, opaticy, altitude_mode, altitude )
     {
         if ( !points ) {
@@ -211,12 +223,15 @@ class GeoJSONLoader extends Loader {
         entity.setLineWidth( width );
         entity.setColor( color );
         entity.setOpacity( opaticy );
-        this._scene.addEntity( entity );
+        this._onEntity( this, entity );
         
         return true;
     }
 
 
+    /**
+     * @private
+     */
     _loadPoint( geometry, geojson )
     {
         const fgColor = this._getPointFGColor( geojson );
@@ -250,7 +265,7 @@ class GeoJSONLoader extends Loader {
             else {
                 entity.addPin( coords, props );
             }
-            this._scene.addEntity( entity );
+            this._onEntity( this, entity );
         }
         else { // type === GEOMETRY_TYPES.MULTI_POINT
             var entity = new PinEntity( this._scene );
@@ -267,13 +282,16 @@ class GeoJSONLoader extends Loader {
                     entity.addPin( coords, props );
                 }
             }
-            this._scene.addEntity( entity );
+            this._onEntity( this, entity );
         }
 
         return true;
     }
 
 
+    /**
+     * @private
+     */
     _loadPolygons( geometry, geojson )
     {
         const color4 = this._getFillColor( geojson );
@@ -304,6 +322,9 @@ class GeoJSONLoader extends Loader {
     }
 
 
+    /**
+     * @private
+     */
     _generatePolygon( pointsList, color, opaticy, altitude_mode, altitude, extruded_height ) 
     {
         if ( !pointsList ) {
@@ -321,12 +342,15 @@ class GeoJSONLoader extends Loader {
             if ( i === 0 ) entity.addOuterBoundary( fp );
             else entity.addInnerBoundary( fp );
         }
-        this._scene.addEntity(entity);
+        this._onEntity( this, entity );
         
         return true;
     }
 
 
+    /**
+     * @private
+     */
     _getActualValue( valueFromCallback, valueInGeoJSON, defaultValue ) {
         return (
             valueFromCallback != null ? valueFromCallback: // value from callback is the most prioritized
@@ -336,6 +360,9 @@ class GeoJSONLoader extends Loader {
     }
 
 
+    /**
+     * @private
+     */
     _flatten( ary, altitude, len=ary.length )
     {
         return ary.reduce( (p, c, i) => (

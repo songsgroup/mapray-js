@@ -43,6 +43,7 @@ class SceneLoader extends Loader {
         }
 
         super( scene, resource, {
+                onEntity: options.onEntity,
                 onLoad: options.callback
         } );
 
@@ -83,6 +84,10 @@ class SceneLoader extends Loader {
     }
 
 
+    /**
+     * @summary 読み込み処理の実態。継承クラスによって実装される。
+     * @private
+     */
     _load()
     {
         return (
@@ -215,7 +220,7 @@ class SceneLoader extends Loader {
             }
 
             if ( entity ) {
-                scene.addEntity( entity );
+                this._onEntity( this, entity );
                 var id = item.id;
                 if ( id ) {
                     this._setReference( id, entity );
