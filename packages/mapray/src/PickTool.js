@@ -2,6 +2,7 @@ import FrameBuffer from "./FrameBuffer";
 import Entity from "./Entity";
 import Material from "./Material";
 import Camera from "./Camera";
+import GeoMath from "./GeoMath";
 
 import depth_vs_code from "./shader/depth.vert";
 import depth_fs_code from "./shader/depth.frag";
