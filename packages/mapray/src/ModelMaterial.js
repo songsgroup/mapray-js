@@ -4,6 +4,7 @@ import model_vs_code from "./shader/model.vert";
 import model_fs_code from "./shader/model.frag";
 import rid_fs_code from "./shader/rid.frag";
 import { RenderTarget } from "./RenderStage";
+import RenderPhase from "./RenderPhase";
 
 /**
  * @summary 基本マテリアル
@@ -51,7 +52,9 @@ class ModelMaterial extends EntityMaterial {
 
         if (stage.getRenderTarget() === RenderTarget.SCENE) {
             // 基本色係数
-            this.setVector4( "u_base_color", pbrMR["baseColorFactor"] );
+            var bcf = pbrMR["baseColorFactor"];
+            var alpha = stage.phase === RenderPhase.OVERLAY ? 0.3 : 1.0;
+            this.setVector4( "u_base_color", [ bcf[ 0 ], bcf[ 1 ], bcf[ 2 ], alpha * bcf[ 3 ] ] );
 
             // ライト逆方向 (視点座標系) と強さ
             this.setVector3( "u_light_dir", [0, 0, 1] );

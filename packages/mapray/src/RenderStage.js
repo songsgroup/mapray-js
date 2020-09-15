@@ -20,7 +20,6 @@ const RenderTarget = {
 
 
 
-
 /**
  * @summary 1フレーム分のレンダリングを実行
  * @desc
